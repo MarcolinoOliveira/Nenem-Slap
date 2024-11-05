@@ -14,6 +14,7 @@ export async function deleteClientDoc(id: string) {
 export async function deletePaymentDoc(client: DocumentData, promissoryPayment: promissoryPaymentProps, idSec: string, totalValuePayments: number) {
 
   if (client.id) {
+
     const ref = doc(db, 'clientes', client.id)
     const refAll = doc(db, 'pagamentos', idSec)
     const refDel = doc(db, `clientes/${client.id}/payments`, promissoryPayment.id)
