@@ -25,7 +25,8 @@ export function ChangeBuyModal({ client, open, setOpen, newBuy }: changeUserData
     id: newBuy ? newBuy.id : client.id,
     title: newBuy ? newBuy.title : client.title,
     purchaseValue: newBuy ? newBuy.purchaseValue : client.purchaseValue,
-    datePurchase: newBuy ? newBuy.datePurchase : client.datePurchase
+    datePurchase: newBuy ? newBuy.datePurchase : client.datePurchase,
+    inputValue: ''
   })
 
   const changeData = () => {
