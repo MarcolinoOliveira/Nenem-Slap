@@ -32,6 +32,7 @@ export interface newBuyProps {
   title: string
   purchaseValue: string
   datePurchase: string
+  inputValue: string
 }
 
 export interface changeDataClientProps {

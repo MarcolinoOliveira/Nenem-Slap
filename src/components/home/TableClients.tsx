@@ -47,7 +47,11 @@ export function TableClients() {
         <div className="flex flex-1 items-center">
           <Link href={`/promissoryClient/${e.id}`} className="w-full flex flex-col flex-1 items-center justify-center gap-1">
             <p className="flex w-full items-start font-semibold text-sm touch-auto">{e.name}</p>
-            {e.status != 'inativo' && <p className="flex w-full items-start text-sm text-slate-400">{e.maturity}</p>}
+            {e.status != 'inativo' &&
+              <div className="flex w-full gap-4 items-start">
+                <p className="text-sm text-slate-400">{e.maturity}</p>
+                <p className="text-sm text-slate-400">{e.telephone}</p>
+              </div>}
           </Link>
         </div>
         <div className={`flex ${e.status === 'inativo' ? 'bg-slate-700' : e.status === 'OK' ? 'bg-green-500' : 'bg-red-500'}

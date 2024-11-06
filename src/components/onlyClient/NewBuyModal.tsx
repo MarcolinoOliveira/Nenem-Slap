@@ -4,11 +4,14 @@ import MaskedCurrencyInput from "@/lib/masks/MaskCurrencyInput"
 import { Button } from "../ui/button"
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog"
 import { Label } from "../ui/label"
-import { useState } from "react"
+import { use, useState } from "react"
 import { Input } from "../ui/input"
 import { newBuyProps } from "@/interface/globalInterfaces"
 import { addNewBuyPromissory } from "@/firebase/addDocs"
 import { useToast } from "@/hooks/use-toast"
+import { PaymentMethods } from "../global/PaymentsMethods"
+import { getTotalPayments } from "@/lib/dateFormatter"
+import ClientsDataContext from "@/context/ClientsDataContext"
 
 
 interface PaymentPromissoryModalProps {
@@ -16,21 +19,26 @@ interface PaymentPromissoryModalProps {
   totalValue: string
   currentValue: string
   maturity: string
+  status: string
 }
 
-export const NewBuyModal = ({ id, totalValue, currentValue, maturity }: PaymentPromissoryModalProps) => {
+export const NewBuyModal = ({ id, totalValue, currentValue, maturity, status }: PaymentPromissoryModalProps) => {
 
   const { toast } = useToast()
+  const { allPayments } = use(ClientsDataContext)
 
   const [open, setOpen] = useState<boolean>(false)
+  const [method, setMethod] = useState<string>('')
   const [newBuy, setNewBuy] = useState<newBuyProps>({
     id: '',
     title: '',
     purchaseValue: '',
     datePurchase: '',
+    inputValue: ''
   })
 
   const addNewBuy = () => {
+    const { idSec, totalValuePayments } = getTotalPayments(newBuy.datePurchase, allPayments)
 
     if (newBuy.title === '' || newBuy.purchaseValue === '' || newBuy.datePurchase === '') {
       toast({
@@ -41,7 +49,7 @@ export const NewBuyModal = ({ id, totalValue, currentValue, maturity }: PaymentP
         className: 'border-2 border-red-500'
       })
     } else {
-      addNewBuyPromissory({ id, totalValue, newBuy, currentValue, maturity })
+      addNewBuyPromissory({ id, totalValue, newBuy, currentValue, maturity, method, idSec, totalValuePayments })
       toast({
         variant: "default",
         title: "Venda relizada com sucesso.",
@@ -49,12 +57,12 @@ export const NewBuyModal = ({ id, totalValue, currentValue, maturity }: PaymentP
         className: 'border-2 border-green-500'
       })
       setOpen(prev => !prev)
-      setNewBuy({ id: '', title: '', purchaseValue: '', datePurchase: '' })
+      setNewBuy({ id: '', title: '', purchaseValue: '', datePurchase: '', inputValue: '' })
     }
   }
 
   const cancelBuy = () => {
-    setNewBuy({ id: '', title: '', purchaseValue: '', datePurchase: '' })
+    setNewBuy({ id: '', title: '', purchaseValue: '', datePurchase: '', inputValue: '' })
   }
 
   return (
@@ -83,6 +91,17 @@ export const NewBuyModal = ({ id, totalValue, currentValue, maturity }: PaymentP
               </Label>
               <MaskedCurrencyInput value={newBuy.purchaseValue} onChange={(e) => setNewBuy({ ...newBuy, purchaseValue: e })} />
             </div>
+            {status === 'inativo' &&
+              <div className="flex flex-col items-center gap-2 w-full">
+                <Label htmlFor="name" className="text-left w-full font-semibold">
+                  Entrada:
+                </Label>
+                <MaskedCurrencyInput value={newBuy.inputValue} onChange={(e) => setNewBuy({ ...newBuy, inputValue: e })} />
+              </div>
+            }
+            {newBuy.inputValue &&
+              <PaymentMethods open={open} setMethod={setMethod} />
+            }
             <div className="flex flex-col items-center gap-2">
               <Label htmlFor="username" className="text-left w-full font-semibold">
                 Data da Venda:*

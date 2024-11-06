@@ -19,6 +19,9 @@ interface addNewBuyProps {
   newBuy: newBuyProps
   currentValue: string
   maturity: string
+  method: string
+  idSec: string
+  totalValuePayments: number
 }
 
 export async function addClientDoc(client: clientsProps, idSec: string, totalValuePayments: number, method: string) {
@@ -113,7 +116,7 @@ export async function addPaymentPromissory({ id, idSec, totalValuePayments, curr
   }
 }
 
-export async function addNewBuyPromissory({ id, totalValue, newBuy, currentValue, maturity }: addNewBuyProps) {
+export async function addNewBuyPromissory({ id, totalValue, newBuy, currentValue, maturity, method, idSec, totalValuePayments }: addNewBuyProps) {
   if (id) {
     const refNewBuy = collection(db, `clientes/${id}/buys`)
     const refDoc = doc(db, 'clientes', id)
@@ -123,8 +126,16 @@ export async function addNewBuyPromissory({ id, totalValue, newBuy, currentValue
     const buyValue = parseFloat(newBuy.purchaseValue?.replace(/R\$\s?|/g, '').replace(',', '.'))
 
     const newTotalValue = totalValueNumber + buyValue
-    const newCurrentValue = currentValueNumber + buyValue
+    let newCurrentValue = 0
     const newMaturity = getNewMaturity(newBuy.datePurchase)
+
+
+    if (newBuy.inputValue) {
+      const inputValueNumber = parseFloat(newBuy.inputValue?.replace(/R\$\s?|/g, '').replace(',', '.'))
+      newCurrentValue += currentValueNumber + (buyValue - inputValueNumber)
+    } else {
+      newCurrentValue += currentValueNumber + buyValue
+    }
 
     const newTotalValueString = 'R$ ' + newTotalValue.toFixed(2).replace('.', ',')
     const newCurrentValueString = 'R$ ' + newCurrentValue.toFixed(2).replace('.', ',')
@@ -144,5 +155,31 @@ export async function addNewBuyPromissory({ id, totalValue, newBuy, currentValue
 
     await addDoc(refNewBuy, payloadBuy)
     await updateDoc(refDoc, payloadUpdate)
+
+    if (newBuy.inputValue) {
+      const refPayment = collection(db, `clientes/${id}/payments`)
+      const payloadPayment = {
+        datePayment: newBuy.datePurchase,
+        method: method,
+        valuePayment: newBuy.inputValue
+      }
+      await addDoc(refPayment, payloadPayment)
+
+      const newTotalValue = totalValuePayments + parseFloat(newBuy.inputValue?.replace(/R\$\s?|/g, '').replace(',', '.'))
+
+      const payloadAllPayment = {
+        date: newBuy.datePurchase,
+        currentValue: newTotalValue
+      }
+
+      if (idSec === '') {
+        const id = formatIdPaymentMonth(newBuy.datePurchase)
+        const ref = doc(db, 'pagamentos', id)
+        await setDoc(ref, payloadAllPayment)
+      } else {
+        const docUpdatePayment = doc(db, 'pagamentos', idSec)
+        await updateDoc(docUpdatePayment, payloadAllPayment)
+      }
+    }
   }
 }

@@ -40,7 +40,7 @@ export function AddClientModal() {
   const endValue = parseFloat(client.currentValue?.replace(/R\$\s?|/g, '').replace(',', '.')) -
     parseFloat(client.inputValue?.replace(/R\$\s?|/g, '').replace(',', '.'))
 
-  const addclient = async () => {
+  const addclient = () => {
     const [year, month, day] = client.datePurchase?.split('-')
     const { idSec, totalValuePayments } = getTotalPayments(client.datePurchase, allPayments)
 

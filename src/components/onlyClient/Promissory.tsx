@@ -76,7 +76,7 @@ export const Promissory = ({ id }: promissoryProps) => {
         </div>
 
         <div className="flex w-full justify-between gap-2">
-          <NewBuyModal id={id} totalValue={client?.totalValue} currentValue={client?.currentValue} maturity={client?.maturity} />
+          <NewBuyModal id={id} totalValue={client?.totalValue} currentValue={client?.currentValue} maturity={client?.maturity} status={client?.status} />
           <PaymentPromissoryModal id={id} currentValue={client?.currentValue} maturity={client?.maturity} />
         </div>
       </div>
