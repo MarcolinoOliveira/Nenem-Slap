@@ -1,4 +1,4 @@
-import { promissoryPaymentProps } from "@/interface/globalInterfaces";
+import { newBuyProps, promissoryPaymentProps } from "@/interface/globalInterfaces";
 import { getPreviousMaturity } from "@/lib/dateFormatter";
 import { db } from "@/lib/firebase";
 import { deleteDoc, doc, DocumentData, updateDoc } from "firebase/firestore";
@@ -33,9 +33,9 @@ export async function deletePaymentDoc(client: DocumentData, promissoryPayment: 
       currentValue: allValue
     }
 
+    await deleteDoc(refDel)
     await updateDoc(ref, payload)
     await updateDoc(refAll, payloadAllPayments)
-    await deleteDoc(refDel)
   }
 }
 
@@ -64,5 +64,30 @@ export async function deletePaymentInput(client: DocumentData, idSec: string, to
 
     await updateDoc(ref, payload)
     await updateDoc(refAll, payloadAllPayments)
+  }
+}
+
+export async function deleteBuyDoc(client: DocumentData, buy: newBuyProps) {
+  if (client.id) {
+    const ref = doc(db, `clientes/${client.id}/buys`, buy.id)
+    const refClient = doc(db, 'clientes', client.id)
+
+    const buyNumber = parseFloat(buy.purchaseValue?.replace(/R\$\s?|/g, '').replace(',', '.'))
+    const currentValueNumber = parseFloat(client.currentValue?.replace(/R\$\s?|/g, '').replace(',', '.'))
+    const TotalValueNumber = parseFloat(client.totalValue?.replace(/R\$\s?|/g, '').replace(',', '.'))
+
+    const newCurrentValue = currentValueNumber - buyNumber
+    const newTotalValue = TotalValueNumber - buyNumber
+
+    const currentValueString = 'R$ ' + newCurrentValue.toFixed(2).replace('.', ',')
+    const totalValueString = 'R$ ' + newTotalValue.toFixed(2).replace('.', ',')
+
+    const payload = {
+      currentValue: currentValueString,
+      totalValue: totalValueString
+    }
+
+    await deleteDoc(ref)
+    await updateDoc(refClient, payload)
   }
 }

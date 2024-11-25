@@ -44,15 +44,15 @@ export function TableClients() {
 
     return (
       <div key={index} style={style} className={`flex w-full rounded-md border-b px-2 py-3 border-border ${index % 2 === 0 ? 'bg-border' : 'bg-accent'}`}>
-        <div className="flex flex-1 items-center">
-          <Link href={`/promissoryClient/${e.id}`} className="w-full flex flex-col flex-1 items-center justify-center gap-1">
-            <p className="flex w-full items-start font-semibold text-sm touch-auto">{e.name}</p>
-            {e.status != 'inativo' &&
-              <div className="flex w-full gap-4 items-start">
-                <p className="text-sm text-slate-400">{e.maturity}</p>
-                <p className="text-sm text-slate-400">{e.telephone}</p>
-              </div>}
+        <div className="flex flex-1 flex-col w-full items-center">
+          <Link href={`/promissoryClient/${e.id}`} className="w-full flex flex-1 items-center justify-center">
+            <p className="flex w-full items-start font-semibold text-sm hover:text-primary hover:underline">{e.name}</p>
           </Link>
+          {e.status != 'inativo' &&
+            <div className="flex w-full gap-4 items-start">
+              <p className="text-sm text-slate-400">{e.maturity}</p>
+              <p className="text-sm text-slate-400">{e.telephone}</p>
+            </div>}
         </div>
         <div className={`flex ${e.status === 'inativo' ? 'bg-slate-700' : e.status === 'OK' ? 'bg-green-500' : 'bg-red-500'}
                        w-[20%] sm:w-[15%] items-center rounded-xl justify-center h-8 my-auto`}>

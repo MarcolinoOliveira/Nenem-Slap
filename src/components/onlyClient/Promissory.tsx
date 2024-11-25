@@ -8,6 +8,7 @@ import { NewBuyModal } from "./NewBuyModal"
 import { newBuyProps, promissoryPaymentProps } from "@/interface/globalInterfaces"
 import { SubMenuPromissory } from "./SubMenuPromissory"
 import { SubMenuBuys } from "./SubMenuBuys"
+import { SubMenuBuyHome } from "./SubMenuBuyHome"
 
 interface promissoryProps {
   id: string
@@ -44,7 +45,7 @@ export const Promissory = ({ id }: promissoryProps) => {
             </div>
             <div className="flex items-center mt-2 justify-between">
               <p className="font-bold text-[20px]">{client?.purchaseValue}</p>
-              {client && !promissoryBuy.length && <SubMenuBuys client={client} newBuy={promissoryBuy[0]} />}
+              {client && <SubMenuBuyHome client={client} newBuy={promissoryBuy[0]} />}
             </div>
           </div>
           {promissoryBuy?.map((e, key) => (
@@ -55,7 +56,7 @@ export const Promissory = ({ id }: promissoryProps) => {
               </div>
               <div className="flex items-center mt-2 justify-between">
                 <p className="font-bold text-[20px]">{e?.purchaseValue}</p>
-                {client && (key === promissoryBuy.length - 1) && <SubMenuBuys client={client} newBuy={e} />}
+                {client && <SubMenuBuys client={client} newBuy={e} />}
               </div>
             </div>
           ))}

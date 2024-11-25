@@ -88,7 +88,7 @@ export async function getPromissoryPaymentClient({ id, setPromissoryPayment }: g
 export async function getPromissoryBuyClient({ id, setPromissoryBuy }: getPromissoryBuyClientProps) {
   if (id) {
     const ref = collection(db, `clientes/${id}/buys`)
-    onSnapshot(query(ref, orderBy('datePurchase', 'desc')), (snapshot) => {
+    onSnapshot(query(ref, orderBy('datePurchase')), (snapshot) => {
       const res = snapshot.docs.map((doc) => ({ ...doc.data() as newBuyProps, id: doc.id }))
       setPromissoryBuy(res)
     })
